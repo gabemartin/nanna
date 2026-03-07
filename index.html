@@ -48,6 +48,9 @@
             --scrollbar-track: #f1f1f1;
             --scrollbar-thumb: #888;
             --scrollbar-thumb-hover: #555;
+            --attn: #f44336;
+            --hold-button-bg: #3b41f2;
+            --hold-button-color: white;
         }
 
         body.dark-mode {
@@ -55,6 +58,7 @@
             --bg-primary: #1a1a1a;
             --bg-secondary: #2d2d2d;
             --btn-subtle-bg: #424242;
+            --btn-subtle-hover-bg: #616161;
             --btn-subtle-color: #ffffff;
             --text-primary: #e0e0e0;
             --text-secondary: #b0b0b0;
@@ -66,6 +70,9 @@
             --scrollbar-track: #1a1a1a;
             --scrollbar-thumb: #555;
             --scrollbar-thumb-hover: #777;
+            --attn: #fe6e64;
+            --hold-button-bg: #6368ff;
+            --hold-button-color: white;
         }
 
         * {
@@ -148,9 +155,9 @@
             }
         }
 
-        .clear-button, .edit-button {
-            background: rgba(226, 226, 226, 1);
-            color: rgba(0, 0, 0, 1);
+        .clear-button, .edit-button, .copy-button, .fullscreen-button {
+            background: var(--btn-subtle-bg);
+            color: var(--btn-subtle-color);
             border: none; 
             font-size: 18px;
             font-weight: 400;
@@ -164,9 +171,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
         }
 
-        .clear-button:hover, .edit-button:hover {
+        .clear-button:hover, .edit-button:hover, .copy-button:hover, .fullscreen-button:hover {
             background: var(--btn-subtle-hover-bg);
             transform: translateY(-2px);
             box-shadow: none;
@@ -221,33 +229,10 @@
             color: #666;
             font-weight: 500;
             white-space: nowrap;
-        }
-
-        .copy-button { 
-            background: rgba(237, 237, 237, 1);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            font-size: 18px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .copy-button:hover {
-            background: #F57C00;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
+        } 
 
         .copy-button.copied {
-            background: #4CAF50;
+            background: #4CAF50 !important;
         }
 
         #copyButtonText {
@@ -280,7 +265,7 @@
         }
 
         .status-dot.active {
-            background: #f44336;
+            background: var(--attn);
         }
         #statusText {
             display: none;
@@ -307,7 +292,7 @@
         }
 
         .transcript-container.listening {
-            border: 4px solid #f44336;
+            border: 4px solid var(--attn);
             box-shadow: 0 4px 12px var(--shadow-hover);
         }
 
@@ -321,8 +306,7 @@
         }
 
         .interim-text {
-            color: var(--text-secondary);
-            font-style: italic;
+            color: var(--attn); 
         }
 
         .error-message {
@@ -478,8 +462,8 @@
 
         .hold-button {
             display: inline-block;
-            background: #2196F3;
-            color: white;
+            background: var(--hold-button-bg);
+            color: var(--hold-button-color);
             border: none;
             padding: 15px 40px;
             font-size: 18px;
@@ -494,7 +478,7 @@
         }
 
         .hold-button.holding {
-            background: #f44336;
+            background: var(--attn);
             animation: pulse 1.5s infinite;
         }
 
@@ -543,10 +527,85 @@
             outline: none;
             caret-color: #1976D2;
         }
-        .edit-button:disabled {
+        .edit-button:disabled, .copy-button:disabled, .fullscreen-button:disabled {
             opacity: 0.35;
             cursor: not-allowed;
             transform: none;
+        }
+
+        /* Fullscreen overlay */
+        .fullscreen-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: var(--bg-secondary);
+            flex-direction: column;
+            transition: background-color 0.3s ease;
+        }
+
+        .fullscreen-overlay.visible {
+            display: flex;
+        }
+
+        .fullscreen-close {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2001;
+            background: var(--btn-subtle-bg);
+            color: var(--btn-subtle-color);
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px var(--shadow);
+            transition: background 0.2s ease, transform 0.2s ease;
+            opacity: 0.7;
+        }
+
+        .fullscreen-close:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .fullscreen-close:active {
+            transform: scale(0.95);
+        }
+
+        .fullscreen-text {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px;
+            padding-top: 80px;
+            font-size: 48px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        @media (max-width: 768px) {
+            .fullscreen-text {
+                font-size: 36px;
+                padding: 20px;
+                padding-top: 80px;
+            }
+
+            .fullscreen-close {
+                top: 15px;
+                right: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .fullscreen-text {
+                font-size: 28px;
+            }
         }
     </style>
 </head>
@@ -556,13 +615,10 @@
             <div class="header-left">
                 <button class="hold-button" id="holdButton">Hold to Speak</button>
                 <button class="clear-button" id="clearButton"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg></button>
+                <button class="copy-button" id="copyButton" title="Copy text to clipboard" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z" /></svg> <span id="copyButtonText">Copy</span></button>
                 <button class="edit-button" id="editButton" title="Edit transcript" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg></button>
-            </div>
+                <button class="fullscreen-button" id="fullscreenButton" title="View full screen" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg></button></div>
             <div class="header-right hide-on-mobile">
-                <button class="copy-button" id="copyButton" title="Copy text to clipboard">
-                    <span>📋</span>
-                    <span id="copyButtonText">Copy</span>
-                </button>
                 <div class="font-controls">
                     <span class="font-size-label sr-only">Text Size:</span>
                     <button class="font-button" id="decreaseFontButton" title="Decrease text size">A-</button>
@@ -587,6 +643,11 @@
         <div class="transcript-text" id="transcriptText">
             <div class="placeholder">Hold to speak</div>
         </div>
+    </div>
+
+    <div class="fullscreen-overlay" id="fullscreenOverlay">
+        <button class="fullscreen-close" id="fullscreenClose" title="Exit full screen"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25" /></svg></button>
+        <div class="fullscreen-text" id="fullscreenText"></div>
     </div>
 
     <div class="error-message" id="errorMessage" style="display: none;"></div>
@@ -638,6 +699,10 @@
             const editButton = document.getElementById('editButton');
             const editDoneButton = document.getElementById('editDoneButton');
             const header = document.getElementById('header');
+            const fullscreenButton = document.getElementById('fullscreenButton');
+            const fullscreenOverlay = document.getElementById('fullscreenOverlay');
+            const fullscreenClose = document.getElementById('fullscreenClose');
+            const fullscreenText = document.getElementById('fullscreenText');
 
             // Theme management
             const savedTheme = localStorage.getItem('theme') || 'light';
@@ -855,6 +920,8 @@
                     transcriptText.innerHTML = '<div class="placeholder">Hold to speak</div>';
                 }
                 editButton.disabled = true;
+                copyButton.disabled = true;
+                fullscreenButton.disabled = true;
                 errorMessage.style.display = 'none';
                 lastSpeechTime = Date.now(); // Reset pause timer
                 updateFontSize(currentFontSize); // Update placeholder font size
@@ -897,12 +964,24 @@
                 finalTranscript = transcriptText.innerHTML;
                 if (transcriptText.querySelector('.placeholder')) {
                     finalTranscript = '';
-                    editButton.disabled = true;
                 }
+                editButton.disabled = !finalTranscript;
+                copyButton.disabled = !finalTranscript;
+                fullscreenButton.disabled = !finalTranscript;
             }
 
             editButton.addEventListener('click', enterEditMode);
             editDoneButton.addEventListener('click', exitEditMode);
+
+            // Fullscreen mode
+            fullscreenButton.addEventListener('click', () => {
+                fullscreenText.innerHTML = finalTranscript;
+                fullscreenOverlay.classList.add('visible');
+            });
+
+            fullscreenClose.addEventListener('click', () => {
+                fullscreenOverlay.classList.remove('visible');
+            });
 
             // Recognition event handlers
             recognition.onstart = () => {
@@ -970,6 +1049,8 @@
 
                 transcriptText.innerHTML = displayHTML || '<div class="placeholder">Listening...</div>';
                 editButton.disabled = !finalTranscript;
+                copyButton.disabled = !finalTranscript;
+                fullscreenButton.disabled = !finalTranscript;
 
                 // Auto-scroll to bottom
                 transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
