@@ -39,7 +39,7 @@ Once installed, it opens without browser chrome for a clean, app-like experience
 ## Features
 
 ### Core
-- Real-time transcription with continuous listening
+- **Hold to speak** — press and hold the button to transcribe; release to stop
 - Interim results — words appear as they're being spoken, then finalize
 - Pause detection — a visual separator is inserted after ~1 second of silence
 - Auto-scroll as new text appears
@@ -52,24 +52,12 @@ Once installed, it opens without browser chrome for a clean, app-like experience
 - Dark/light mode toggle, preference saved to localStorage
 - High contrast mode support via CSS media query
 
-### Slow Mode
-An accessibility feature for users who need extra time to process each word:
-- Displays one word at a time in very large text (120px desktop, 80px tablet, 60px mobile)
-- Shows the previous 3 words above the current word for context
-- Interim results update the display in real-time
-- Toggle via the "Slow Mode" button in the header, or via voice command
-- Preference saved to localStorage
-
 ### Voice Commands
-Hands-free control while the microphone is active:
+While holding the button to speak, you can say:
 
 | Say | Effect |
 |-----|--------|
 | "clear text" | Clears all transcribed text |
-| "stop listening" | Pauses transcription (mic stays active, commands still work) |
-| "start listening" | Resumes transcription after pausing |
-| "slow mode" | Enables slow mode |
-| "slow mode off" | Disables slow mode |
 
 When a command is recognized, a green confirmation overlay appears briefly. Command phrases are not added to the transcript.
 
@@ -99,10 +87,8 @@ The app is intentionally a **single HTML file** with no external dependencies. T
 | Variable | Purpose |
 |----------|---------|
 | `isListening` | Whether speech recognition is active |
-| `isPaused` | Whether transcription is paused (mic active but text not shown) |
+| `isHoldToSpeak` | Whether user is holding the button |
 | `finalTranscript` | Accumulated HTML string of finalized speech |
-| `isSlowMode` | Whether slow mode is active |
-| `slowModeWords` | Array of all words spoken in the current session |
 
 ### localStorage Keys
 
@@ -110,7 +96,6 @@ The app is intentionally a **single HTML file** with no external dependencies. T
 |-----|--------|---------|
 | `theme` | `"light"` / `"dark"` | `"light"` |
 | `transcriptFontSize` | integer (px) | `48` |
-| `slowMode` | `"true"` / `"false"` | `"false"` |
 
 ### Design Principles
 
@@ -138,15 +123,14 @@ Some PWA features (like the manifest) only work when served over HTTP, not `file
 
 Before submitting changes, verify:
 
-- [ ] Start/Stop listening works
+- [ ] Hold to speak works (touch and mouse)
 - [ ] Text appears during speech (interim) and finalizes correctly
 - [ ] Pause separators appear after silence
 - [ ] Font size controls work and persist across page reload
-- [ ] Clear button works in all states (listening, paused, stopped)
+- [ ] Clear button works in all states (listening, stopped)
 - [ ] Copy button copies plain text (not HTML)
 - [ ] Dark mode toggles and persists
-- [ ] Slow mode displays one word at a time with context
-- [ ] All voice commands work
+- [ ] "Clear text" voice command works while holding
 - [ ] Error message appears on unsupported browsers
 - [ ] Responsive layout works on mobile (controls simplify correctly)
 - [ ] Safe area padding works on iPhone with notch

@@ -36,6 +36,7 @@
             --bg-primary: #f5f5f5;
             --bg-secondary: white;
             --btn-subtle-bg: #e2e2e2;
+            --btn-subtle-hover-bg: #d6ebff;
             --btn-subtle-color: #000000;
             --text-primary: #212121;
             --text-secondary: #757575;
@@ -107,33 +108,6 @@
             display: flex;
             gap: 15px;
         }
-        .mic-button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 18px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .mic-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .mic-button:active {
-            transform: translateY(0);
-        }
-
-        .mic-button.listening {
-            background: #f44336;
-            animation: pulse 1.5s infinite;
-        }
-
         @keyframes pulse {
             0%, 100% {
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(244, 67, 54, 0.7);
@@ -143,21 +117,26 @@
             }
         }
 
-        .clear-button {
+        .clear-button, .edit-button {
             background: rgba(226, 226, 226, 1);
             color: rgba(0, 0, 0, 1);
-            border: none;
-            padding: 15px 30px;
+            border: none; 
             font-size: 18px;
             font-weight: 400;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: none;
+            width: 60px;
+            flex-shrink: 0;
+            height: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .clear-button:hover {
-            background: #616161;
+        .clear-button:hover, .edit-button:hover {
+            background: var(--btn-subtle-hover-bg);
             transform: translateY(-2px);
             box-shadow: none;
         }
@@ -284,10 +263,12 @@
             border-radius: 12px;
             box-shadow: 0 4px 12px var(--shadow);
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            border: 4px solid transparent;
         }
 
         .transcript-container.listening {
             border: 4px solid #f44336;
+            box-shadow: 0 4px 12px var(--shadow-hover);
         }
 
         .transcript-text {
@@ -331,11 +312,6 @@
 
             .header {
                 padding: 15px;
-            }
-
-            .mic-button, .clear-button {
-                padding: 12px 30px;
-                font-size: 16px;
             }
 
             .transcript-container {
@@ -458,96 +434,6 @@
             clip: rect(0, 0, 0, 0);
         }
 
-        /* Slow mode toggle */
-        .slow-mode-toggle {
-            background: var(--btn-subtle-bg);
-            color: var(--btn-subtle-color);
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: none;
-            white-space: nowrap;
-        }
-
-        .slow-mode-toggle.active {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .slow-mode-toggle:hover {
-            transform: translateY(-2px);
-        }
-
-        .slow-mode-toggle:active {
-            transform: translateY(0);
-        }
-
-        /* Slow mode display */
-        .slow-mode-display {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 40px;
-        }
-
-        .slow-mode-display.active {
-            display: flex;
-        }
-
-        .slow-mode-word {
-            font-size: 120px;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-align: center;
-            line-height: 1.2;
-            margin-bottom: 40px;
-            transition: color 0.3s ease;
-            word-break: break-word;
-        }
-
-        .slow-mode-context {
-            font-size: 48px;
-            color: var(--text-secondary);
-            text-align: center;
-            line-height: 1.4;
-            opacity: 0.6;
-            transition: color 0.3s ease, opacity 0.3s ease;
-        }
-
-        /* Hide normal transcript in slow mode */
-        body.slow-mode-active .transcript-text:not(.slow-mode-display) {
-            display: none;
-        }
-
-        body.slow-mode-active .slow-mode-display {
-            display: flex;
-        }
-
-        @media (max-width: 768px) {
-            .slow-mode-word {
-                font-size: 80px;
-            }
-
-            .slow-mode-context {
-                font-size: 32px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .slow-mode-word {
-                font-size: 60px;
-            }
-
-            .slow-mode-context {
-                font-size: 24px;
-            }
-        } 
         .hold-button {
             display: inline-block;
             background: #2196F3;
@@ -573,13 +459,10 @@
         @media (max-width: 768px) {
             .header-left {
                 width: 100%;
-                flex-wrap: wrap;
+                flex-wrap: nowwrap;
             }
             .hide-on-mobile {
                 display: none;
-            }
-            .mic-button {
-                flex: 1;
             }
             .hold-button {
                 width: 100%;
@@ -633,28 +516,6 @@
             outline: none;
             caret-color: #1976D2;
         }
-
-        /* Edit button */
-        .edit-button {
-            background: var(--btn-subtle-bg);
-            color: var(--btn-subtle-color);
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .edit-button:hover {
-            background: #d6ebff;
-            transform: translateY(-2px);
-        }
-
         .edit-button:disabled {
             opacity: 0.35;
             cursor: not-allowed;
@@ -665,11 +526,9 @@
 <body>
     <div class="header">
         <div class="header-left">
-            <button class="mic-button" id="micButton">Start Listening</button>
+            <button class="hold-button" id="holdButton">Hold to Speak</button>
             <button class="clear-button" id="clearButton"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg></button>
             <button class="edit-button" id="editButton" title="Edit transcript" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg></button>
-            <button class="slow-mode-toggle hide-on-mobile" id="slowModeToggle" title="Toggle slow mode (one word at a time)">Slow Mode</button>
-            <button class="hold-button" id="holdButton">Hold to Speak</button>
         </div>
         <div class="header-right hide-on-mobile">
             <button class="copy-button" id="copyButton" title="Copy text to clipboard">
@@ -698,11 +557,7 @@
 
     <div class="transcript-container" id="transcriptContainer">
         <div class="transcript-text" id="transcriptText">
-            <div class="placeholder">Click "Start Listening" to begin</div>
-        </div>
-        <div class="slow-mode-display" id="slowModeDisplay">
-            <div class="slow-mode-word" id="slowModeWord"></div>
-            <div class="slow-mode-context" id="slowModeContext"></div>
+            <div class="placeholder">Hold to speak</div>
         </div>
     </div>
 
@@ -718,9 +573,10 @@
             document.getElementById('errorMessage').textContent =
                 'Sorry, your browser does not support speech recognition. Please use Chrome, Edge, or Safari.';
             document.getElementById('errorMessage').style.display = 'block';
-            document.getElementById('micButton').disabled = true;
-            document.getElementById('micButton').style.opacity = '0.5';
-            document.getElementById('micButton').style.cursor = 'not-allowed';
+            const holdBtn = document.getElementById('holdButton');
+            holdBtn.disabled = true;
+            holdBtn.style.opacity = '0.5';
+            holdBtn.style.cursor = 'not-allowed';
         } else {
             // Initialize speech recognition
             const recognition = new SpeechRecognition();
@@ -734,11 +590,9 @@
                 .catch(() => {});
 
             let isListening = false;
-            let isPaused = false;
             let isHoldToSpeak = false;
             let finalTranscript = '';
 
-            const micButton = document.getElementById('micButton');
             const holdButton = document.getElementById('holdButton');
             const clearButton = document.getElementById('clearButton');
             const transcriptText = document.getElementById('transcriptText');
@@ -753,39 +607,9 @@
             const commandIndicator = document.getElementById('commandIndicator');
             const themeToggle = document.getElementById('themeToggle');
             const themeIcon = document.getElementById('themeIcon');
-            const slowModeToggle = document.getElementById('slowModeToggle');
             const editButton = document.getElementById('editButton');
             const editToolbar = document.getElementById('editToolbar');
             const editDoneButton = document.getElementById('editDoneButton');
-            const slowModeDisplay = document.getElementById('slowModeDisplay');
-            const slowModeWord = document.getElementById('slowModeWord');
-            const slowModeContext = document.getElementById('slowModeContext');
-
-            // Slow mode state
-            let isSlowMode = localStorage.getItem('slowMode') === 'true';
-            let slowModeWords = [];
-            const SLOW_MODE_CONTEXT_WORDS = 3; // Show last 3 words for context
-
-            // Apply saved slow mode state
-            if (isSlowMode) {
-                document.body.classList.add('slow-mode-active');
-                slowModeToggle.classList.add('active');
-            }
-
-            // Slow mode toggle handler
-            slowModeToggle.addEventListener('click', () => {
-                isSlowMode = !isSlowMode;
-                document.body.classList.toggle('slow-mode-active', isSlowMode);
-                slowModeToggle.classList.toggle('active', isSlowMode);
-                localStorage.setItem('slowMode', isSlowMode);
-
-                // Clear slow mode display when toggling off
-                if (!isSlowMode) {
-                    slowModeWord.textContent = '';
-                    slowModeContext.textContent = '';
-                    slowModeWords = [];
-                }
-            });
 
             // Theme management
             const savedTheme = localStorage.getItem('theme') || 'light';
@@ -805,91 +629,12 @@
             const voiceCommands = {
                 'clear text': () => {
                     finalTranscript = '';
-                    slowModeWords = [];
-                    slowModeWord.textContent = '';
-                    slowModeContext.textContent = '';
-                    transcriptText.innerHTML = isPaused ?
-                        '<div class="placeholder">Paused - Say "start listening" to resume</div>' :
-                        '<div class="placeholder">Listening...</div>';
+                    transcriptText.innerHTML = isListening ?
+                        '<div class="placeholder">Listening...</div>' :
+                        '<div class="placeholder">Hold to speak</div>';
                     showCommandFeedback('✓ Text Cleared');
-                },
-                'stop listening': () => {
-                    if (isListening && !isPaused) {
-                        isPaused = true;
-                        updatePausedState();
-                        showCommandFeedback('✓ Paused');
-                    }
-                },
-                'start listening': () => {
-                    if (isPaused) {
-                        isPaused = false;
-                        updatePausedState();
-                        showCommandFeedback('✓ Resumed');
-                    }
-                },
-                'slow mode off': () => {
-                    if (isSlowMode) {
-                        isSlowMode = false;
-                        document.body.classList.remove('slow-mode-active');
-                        slowModeToggle.classList.remove('active');
-                        localStorage.setItem('slowMode', 'false');
-                        slowModeWord.textContent = '';
-                        slowModeContext.textContent = '';
-                        slowModeWords = [];
-                        showCommandFeedback('✓ Slow Mode Off');
-                    }
-                },
-                'slow mode': () => {
-                    if (!isSlowMode) {
-                        isSlowMode = true;
-                        document.body.classList.add('slow-mode-active');
-                        slowModeToggle.classList.add('active');
-                        localStorage.setItem('slowMode', 'true');
-                        showCommandFeedback('✓ Slow Mode On');
-                    }
                 }
             };
-
-            // Function to update slow mode display
-            function updateSlowModeDisplay(newWords) {
-                if (!isSlowMode) return;
-
-                // Add new words to the array
-                const words = newWords.split(/\s+/).filter(w => w.length > 0);
-                slowModeWords.push(...words);
-
-                // Get the current word (last word)
-                const currentWord = slowModeWords[slowModeWords.length - 1];
-
-                // Get context words (previous words)
-                const contextWords = slowModeWords.slice(
-                    Math.max(0, slowModeWords.length - SLOW_MODE_CONTEXT_WORDS - 1),
-                    slowModeWords.length - 1
-                );
-
-                // Update display
-                slowModeWord.textContent = currentWord || '';
-                slowModeContext.textContent = contextWords.join(' ');
-            }
-
-            // Function to update UI based on paused state
-            function updatePausedState() {
-                if (isPaused) {
-                    statusText.textContent = 'Paused';
-                    statusDot.classList.remove('active');
-                    transcriptContainer.classList.remove('listening');
-                    if (finalTranscript.trim().length === 0) {
-                        transcriptText.innerHTML = '<div class="placeholder">Paused - Say "start listening" to resume</div>';
-                    }
-                } else {
-                    statusText.textContent = 'Listening...';
-                    statusDot.classList.add('active');
-                    transcriptContainer.classList.add('listening');
-                    if (finalTranscript.trim().length === 0) {
-                        transcriptText.innerHTML = '<div class="placeholder">Listening...</div>';
-                    }
-                }
-            }
 
             // Function to show command feedback
             function showCommandFeedback(message, isError = false) {
@@ -994,21 +739,6 @@
                 }
             });
 
-            // Start/Stop button click handler
-            micButton.addEventListener('click', () => {
-                if (isListening) {
-                    recognition.stop();
-                    isPaused = false; // Reset paused state when manually stopping
-                } else {
-                    try {
-                        recognition.start();
-                        isPaused = false; // Ensure not paused when starting
-                    } catch (error) {
-                        console.error('Recognition start error:', error);
-                    }
-                }
-            });
-
             // Hold-to-speak button handlers
             function startHoldToSpeak() {
                 if (isListening) return;
@@ -1017,7 +747,6 @@
                 holdButton.textContent = 'Listening...';
                 try {
                     recognition.start();
-                    isPaused = false;
                 } catch (error) {
                     console.error('Hold to speak start error:', error);
                     isHoldToSpeak = false;
@@ -1059,15 +788,10 @@
             // Clear button click handler
             clearButton.addEventListener('click', () => {
                 finalTranscript = '';
-                slowModeWords = [];
-                slowModeWord.textContent = '';
-                slowModeContext.textContent = '';
-                if (isPaused) {
-                    transcriptText.innerHTML = '<div class="placeholder">Paused - Say "start listening" to resume</div>';
-                } else if (isListening) {
+                if (isListening) {
                     transcriptText.innerHTML = '<div class="placeholder">Listening...</div>';
                 } else {
-                    transcriptText.innerHTML = '<div class="placeholder">Click "Start Listening" to begin</div>';
+                    transcriptText.innerHTML = '<div class="placeholder">Hold to speak</div>';
                 }
                 editButton.disabled = true;
                 errorMessage.style.display = 'none';
@@ -1088,7 +812,6 @@
                 transcriptText.contentEditable = 'true';
                 editToolbar.classList.add('visible');
                 editButton.style.display = 'none';
-                micButton.style.display = 'none';
                 clearButton.style.display = 'none';
                 holdButton.style.display = 'none';
 
@@ -1110,7 +833,6 @@
                 transcriptText.blur();
                 editToolbar.classList.remove('visible');
                 editButton.style.display = '';
-                micButton.style.display = '';
                 clearButton.style.display = '';
                 holdButton.style.display = '';
 
@@ -1128,10 +850,6 @@
             // Recognition event handlers
             recognition.onstart = () => {
                 isListening = true;
-                if (!isHoldToSpeak) {
-                    micButton.textContent = 'Stop Listening';
-                    micButton.classList.add('listening');
-                }
                 transcriptContainer.classList.add('listening');
                 statusDot.classList.add('active');
                 statusText.textContent = 'Listening...';
@@ -1147,10 +865,6 @@
 
             recognition.onend = () => {
                 isListening = false;
-                if (!isHoldToSpeak) {
-                    micButton.textContent = 'Start Listening';
-                    micButton.classList.remove('listening');
-                }
                 isHoldToSpeak = false;
                 holdButton.classList.remove('holding');
                 holdButton.textContent = 'Hold to Speak';
@@ -1180,43 +894,25 @@
                     const transcript = event.results[i][0].transcript;
 
                     if (event.results[i].isFinal) {
-                        // Check for voice commands in the new transcript
-                        const wasCommandDetected = detectVoiceCommand(isPaused ? transcript : (finalTranscript + transcript + ' '));
+                        // Check for voice commands in the transcript
+                        const wasCommandDetected = detectVoiceCommand(finalTranscript + transcript + ' ');
 
-                        // Only add to transcript if not paused AND no command was detected
-                        if (!isPaused && !wasCommandDetected) {
+                        // Only add to transcript if no command was detected
+                        if (!wasCommandDetected) {
                             finalTranscript += transcript + ' ';
                             lastSpeechTime = now;
-
-                            // Update slow mode display with new words
-                            if (isSlowMode) {
-                                updateSlowModeDisplay(transcript);
-                            }
                         }
                     } else {
-                        // Only show interim results if not paused
-                        if (!isPaused) {
-                            interimTranscript += transcript;
-
-                            // In slow mode, show interim results as the current word
-                            if (isSlowMode && transcript.trim()) {
-                                const interimWords = transcript.split(/\s+/).filter(w => w.length > 0);
-                                if (interimWords.length > 0) {
-                                    slowModeWord.textContent = interimWords[interimWords.length - 1];
-                                }
-                            }
-                        }
+                        interimTranscript += transcript;
                     }
                 }
 
-                // Update display only if not paused
-                if (!isPaused) {
-                    const displayHTML = finalTranscript +
-                        (interimTranscript ? `<span class="interim-text">${interimTranscript}</span>` : '');
+                // Update display
+                const displayHTML = finalTranscript +
+                    (interimTranscript ? `<span class="interim-text">${interimTranscript}</span>` : '');
 
-                    transcriptText.innerHTML = displayHTML || '<div class="placeholder">Listening...</div>';
-                    editButton.disabled = !finalTranscript;
-                }
+                transcriptText.innerHTML = displayHTML || '<div class="placeholder">Listening...</div>';
+                editButton.disabled = !finalTranscript;
 
                 // Auto-scroll to bottom
                 transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
@@ -1257,15 +953,6 @@
                 }
             };
 
-            // Restart recognition if it stops unexpectedly (browser limitation workaround)
-            recognition.onend = () => {
-                isListening = false;
-                micButton.textContent = 'Start Listening';
-                micButton.classList.remove('listening');
-                transcriptContainer.classList.remove('listening');
-                statusDot.classList.remove('active');
-                statusText.textContent = 'Ready';
-            };
         }
     </script>
 </body>
