@@ -2,9 +2,11 @@
 
 A simple, accessible real-time speech-to-text web application built for a deaf grandmother to read what people are saying. Uses the Web Speech API built into modern browsers — no installation, no dependencies, no server required.
 
+**[Open the app](https://gabemartin.github.io/nanna/)**
+
 ## How to Run
 
-**Just open `index.html` in Chrome, Edge, or Safari.** That's it.
+**Just open the [hosted site](https://gabemartin.github.io/nanna/) in Chrome, Edge, or Safari.** Or download `index.html` and open it locally — no install needed.
 
 No npm, no build step, no dependencies. The entire app is a single HTML file.
 
