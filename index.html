@@ -730,6 +730,7 @@
             let isListening = false;
             let isHoldToSpeak = false;
             let finalTranscript = '';
+            let lastProcessedIndex = 0; // guards against Android bug where resultIndex is always 0
 
             const holdButton = document.getElementById('holdButton');
             const clearButton = document.getElementById('clearButton');
@@ -1040,6 +1041,7 @@
                 statusText.textContent = 'Listening...';
                 errorMessage.style.display = 'none';
                 lastSpeechTime = Date.now(); // Reset pause timer
+                lastProcessedIndex = 0; // Reset for new recognition session
 
                 // Clear placeholder if present
                 if (transcriptText.querySelector('.placeholder')) {
@@ -1074,7 +1076,12 @@
                     }
                 }
 
-                for (let i = event.resultIndex; i < event.results.length; i++) {
+                // On Android Chrome, event.resultIndex is often stuck at 0, causing all
+                // previously-processed final results to be re-delivered on every event.
+                // We track lastProcessedIndex ourselves to skip results we've already appended.
+                const startIndex = Math.max(event.resultIndex, lastProcessedIndex);
+
+                for (let i = startIndex; i < event.results.length; i++) {
                     const transcript = event.results[i][0].transcript;
 
                     if (event.results[i].isFinal) {
@@ -1086,6 +1093,7 @@
                             finalTranscript += transcript + ' ';
                             lastSpeechTime = now;
                         }
+                        lastProcessedIndex = i + 1;
                     } else {
                         interimTranscript += transcript;
                     }
