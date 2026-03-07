@@ -562,8 +562,8 @@
 
         .fullscreen-close {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: calc(20px + env(safe-area-inset-top, 0px));
+            right: calc(20px + env(safe-area-inset-right, 0px));
             z-index: 2001;
             background: var(--btn-subtle-bg);
             color: var(--btn-subtle-color);
@@ -607,8 +607,8 @@
             }
 
             .fullscreen-close {
-                top: 15px;
-                right: 15px;
+                top: calc(15px + env(safe-area-inset-top, 0px));
+                right: calc(15px + env(safe-area-inset-right, 0px));
             }
         }
 
@@ -987,7 +987,7 @@
             // Fullscreen mode - use large text for readability (min 96px desktop, 72px mobile, or user's preference if larger)
             fullscreenButton.addEventListener('click', () => {
                 fullscreenText.innerHTML = finalTranscript;
-                const minSize = window.innerWidth < 768 ? 72 : 96;
+                const minSize = window.innerWidth < 768 ? 60 : 96;
                 const fullscreenFontSize = Math.max(currentFontSize, minSize);
                 fullscreenText.style.fontSize = fullscreenFontSize + 'px';
                 fullscreenOverlay.classList.add('visible');
