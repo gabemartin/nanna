@@ -548,14 +548,41 @@
                 font-size: 24px;
             }
         } 
+        .hold-button {
+            display: none;
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        .hold-button.holding {
+            background: #f44336;
+            animation: pulse 1.5s infinite;
+        }
+
         @media (max-width: 768px) {
             .header-left {
                 width: 100%;
+                flex-wrap: wrap;
             }
             .hide-on-mobile {
                 display: none;
             }
             .mic-button {
+                flex: 1;
+            }
+            .hold-button {
+                display: block;
                 width: 100%;
             }
         }  
@@ -571,6 +598,7 @@
             <button class="mic-button" id="micButton">Start Listening</button>
             <button class="clear-button" id="clearButton"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg></button>
             <button class="slow-mode-toggle hide-on-mobile" id="slowModeToggle" title="Toggle slow mode (one word at a time)">Slow Mode</button>
+            <button class="hold-button" id="holdButton">Hold to Speak</button>
         </div>
         <div class="header-right hide-on-mobile">
             <button class="copy-button" id="copyButton" title="Copy text to clipboard">
@@ -626,9 +654,11 @@
 
             let isListening = false;
             let isPaused = false;
+            let isHoldToSpeak = false;
             let finalTranscript = '';
 
             const micButton = document.getElementById('micButton');
+            const holdButton = document.getElementById('holdButton');
             const clearButton = document.getElementById('clearButton');
             const transcriptText = document.getElementById('transcriptText');
             const transcriptContainer = document.getElementById('transcriptContainer');
@@ -895,6 +925,53 @@
                 }
             });
 
+            // Hold-to-speak button handlers
+            function startHoldToSpeak() {
+                if (isListening) return;
+                isHoldToSpeak = true;
+                holdButton.classList.add('holding');
+                holdButton.textContent = 'Listening...';
+                try {
+                    recognition.start();
+                    isPaused = false;
+                } catch (error) {
+                    console.error('Hold to speak start error:', error);
+                    isHoldToSpeak = false;
+                    holdButton.classList.remove('holding');
+                    holdButton.textContent = 'Hold to Speak';
+                }
+            }
+
+            function stopHoldToSpeak() {
+                if (!isHoldToSpeak) return;
+                isHoldToSpeak = false;
+                holdButton.classList.remove('holding');
+                holdButton.textContent = 'Hold to Speak';
+                recognition.stop();
+            }
+
+            holdButton.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                startHoldToSpeak();
+            }, { passive: false });
+
+            holdButton.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                stopHoldToSpeak();
+            }, { passive: false });
+
+            holdButton.addEventListener('touchcancel', () => {
+                stopHoldToSpeak();
+            });
+
+            // Mouse fallback for desktop testing
+            holdButton.addEventListener('mousedown', startHoldToSpeak);
+            holdButton.addEventListener('mouseup', stopHoldToSpeak);
+            holdButton.addEventListener('mouseleave', stopHoldToSpeak);
+
+            // Prevent context menu on long press
+            holdButton.addEventListener('contextmenu', (e) => e.preventDefault());
+
             // Clear button click handler
             clearButton.addEventListener('click', () => {
                 finalTranscript = '';
@@ -916,8 +993,10 @@
             // Recognition event handlers
             recognition.onstart = () => {
                 isListening = true;
-                micButton.textContent = 'Stop Listening';
-                micButton.classList.add('listening');
+                if (!isHoldToSpeak) {
+                    micButton.textContent = 'Stop Listening';
+                    micButton.classList.add('listening');
+                }
                 transcriptContainer.classList.add('listening');
                 statusDot.classList.add('active');
                 statusText.textContent = 'Listening...';
@@ -933,8 +1012,13 @@
 
             recognition.onend = () => {
                 isListening = false;
-                micButton.textContent = 'Start Listening';
-                micButton.classList.remove('listening');
+                if (!isHoldToSpeak) {
+                    micButton.textContent = 'Start Listening';
+                    micButton.classList.remove('listening');
+                }
+                isHoldToSpeak = false;
+                holdButton.classList.remove('holding');
+                holdButton.textContent = 'Hold to Speak';
                 transcriptContainer.classList.remove('listening');
                 statusDot.classList.remove('active');
                 statusText.textContent = 'Ready';
