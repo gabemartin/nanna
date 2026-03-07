@@ -94,9 +94,40 @@
             justify-content: space-between;
             align-items: center;
             padding: 8px 20px;
+            height: 64px;
+            min-height: 64px;
+            box-sizing: border-box;
             background: var(--bg-secondary);
             box-shadow: 0 2px 8px var(--shadow);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .header.edit-mode {
+            background: #1976D2;
+            color: white;
+        }
+
+        .header.edit-mode .header-content {
+            display: none;
+        }
+
+        .header .edit-toolbar-content {
+            display: none;
+        }
+
+        .header.edit-mode .edit-toolbar-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
         }
 
         .header-left {
@@ -312,6 +343,8 @@
 
             .header {
                 padding: 15px;
+                height: 74px;
+                min-height: 74px;
             }
 
             .transcript-container {
@@ -473,21 +506,6 @@
             height: 24px;
         }
 
-        /* Edit toolbar - sticky bar shown during editing */
-        .edit-toolbar {
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            background: #1976D2;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .edit-toolbar.visible {
-            display: flex;
-        }
-
         .edit-toolbar-label {
             font-size: 17px;
             font-weight: 600;
@@ -524,35 +542,36 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-left">
-            <button class="hold-button" id="holdButton">Hold to Speak</button>
-            <button class="clear-button" id="clearButton"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg></button>
-            <button class="edit-button" id="editButton" title="Edit transcript" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg></button>
-        </div>
-        <div class="header-right hide-on-mobile">
-            <button class="copy-button" id="copyButton" title="Copy text to clipboard">
-                <span>📋</span>
-                <span id="copyButtonText">Copy</span>
-            </button>
-            <div class="font-controls">
-                <span class="font-size-label sr-only">Text Size:</span>
-                <button class="font-button" id="decreaseFontButton" title="Decrease text size">A-</button>
-                <button class="font-button" id="increaseFontButton" title="Increase text size">A+</button>
+    <div class="header" id="header">
+        <div class="header-content">
+            <div class="header-left">
+                <button class="hold-button" id="holdButton">Hold to Speak</button>
+                <button class="clear-button" id="clearButton"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg></button>
+                <button class="edit-button" id="editButton" title="Edit transcript" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg></button>
             </div>
-            <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">
-                <span id="themeIcon">🌙</span>
-            </button>
-            <div class="status-indicator">
-                <div class="status-dot" id="statusDot"></div>
-                <span id="statusText">Ready</span>
+            <div class="header-right hide-on-mobile">
+                <button class="copy-button" id="copyButton" title="Copy text to clipboard">
+                    <span>📋</span>
+                    <span id="copyButtonText">Copy</span>
+                </button>
+                <div class="font-controls">
+                    <span class="font-size-label sr-only">Text Size:</span>
+                    <button class="font-button" id="decreaseFontButton" title="Decrease text size">A-</button>
+                    <button class="font-button" id="increaseFontButton" title="Increase text size">A+</button>
+                </div>
+                <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">
+                    <span id="themeIcon">🌙</span>
+                </button>
+                <div class="status-indicator">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Ready</span>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="edit-toolbar" id="editToolbar">
-        <span class="edit-toolbar-label">Editing</span>
-        <button class="edit-done-button" id="editDoneButton">Done</button>
+        <div class="edit-toolbar-content">
+            <span class="edit-toolbar-label">Editing</span>
+            <button class="edit-done-button" id="editDoneButton">Done</button>
+        </div>
     </div>
 
     <div class="transcript-container" id="transcriptContainer">
@@ -608,8 +627,8 @@
             const themeToggle = document.getElementById('themeToggle');
             const themeIcon = document.getElementById('themeIcon');
             const editButton = document.getElementById('editButton');
-            const editToolbar = document.getElementById('editToolbar');
             const editDoneButton = document.getElementById('editDoneButton');
+            const header = document.getElementById('header');
 
             // Theme management
             const savedTheme = localStorage.getItem('theme') || 'light';
@@ -810,10 +829,7 @@
                 if (isListening) recognition.stop();
 
                 transcriptText.contentEditable = 'true';
-                editToolbar.classList.add('visible');
-                editButton.style.display = 'none';
-                clearButton.style.display = 'none';
-                holdButton.style.display = 'none';
+                header.classList.add('edit-mode');
 
                 // Place cursor at end
                 transcriptText.focus();
@@ -831,10 +847,7 @@
 
                 transcriptText.contentEditable = 'false';
                 transcriptText.blur();
-                editToolbar.classList.remove('visible');
-                editButton.style.display = '';
-                clearButton.style.display = '';
-                holdButton.style.display = '';
+                header.classList.remove('edit-mode');
 
                 // Sync edits back to finalTranscript
                 finalTranscript = transcriptText.innerHTML;
