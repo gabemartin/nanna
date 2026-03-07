@@ -588,7 +588,78 @@
         .svg-icon {
             width: 24px;
             height: 24px;
-        } 
+        }
+
+        /* Edit toolbar - sticky bar shown during editing */
+        .edit-toolbar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: #1976D2;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .edit-toolbar.visible {
+            display: flex;
+        }
+
+        .edit-toolbar-label {
+            font-size: 17px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .edit-done-button {
+            background: white;
+            color: #1976D2;
+            border: none;
+            padding: 10px 28px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            min-height: 44px;
+            min-width: 80px;
+        }
+
+        .edit-done-button:active {
+            opacity: 0.85;
+        }
+
+        /* Make transcript editable */
+        .transcript-text[contenteditable="true"] {
+            outline: none;
+            caret-color: #1976D2;
+        }
+
+        /* Edit button */
+        .edit-button {
+            background: var(--btn-subtle-bg);
+            color: var(--btn-subtle-color);
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edit-button:hover {
+            background: #d6ebff;
+            transform: translateY(-2px);
+        }
+
+        .edit-button:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            transform: none;
+        }
     </style>
 </head>
 <body>
@@ -596,6 +667,7 @@
         <div class="header-left">
             <button class="mic-button" id="micButton">Start Listening</button>
             <button class="clear-button" id="clearButton"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg></button>
+            <button class="edit-button" id="editButton" title="Edit transcript" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg></button>
             <button class="slow-mode-toggle hide-on-mobile" id="slowModeToggle" title="Toggle slow mode (one word at a time)">Slow Mode</button>
             <button class="hold-button" id="holdButton">Hold to Speak</button>
         </div>
@@ -617,6 +689,11 @@
                 <span id="statusText">Ready</span>
             </div>
         </div>
+    </div>
+
+    <div class="edit-toolbar" id="editToolbar">
+        <span class="edit-toolbar-label">Editing</span>
+        <button class="edit-done-button" id="editDoneButton">Done</button>
     </div>
 
     <div class="transcript-container" id="transcriptContainer">
@@ -672,6 +749,9 @@
             const themeToggle = document.getElementById('themeToggle');
             const themeIcon = document.getElementById('themeIcon');
             const slowModeToggle = document.getElementById('slowModeToggle');
+            const editButton = document.getElementById('editButton');
+            const editToolbar = document.getElementById('editToolbar');
+            const editDoneButton = document.getElementById('editDoneButton');
             const slowModeDisplay = document.getElementById('slowModeDisplay');
             const slowModeWord = document.getElementById('slowModeWord');
             const slowModeContext = document.getElementById('slowModeContext');
@@ -984,10 +1064,59 @@
                 } else {
                     transcriptText.innerHTML = '<div class="placeholder">Click "Start Listening" to begin</div>';
                 }
+                editButton.disabled = true;
                 errorMessage.style.display = 'none';
                 lastSpeechTime = Date.now(); // Reset pause timer
                 updateFontSize(currentFontSize); // Update placeholder font size
             });
+
+            // Edit mode
+            let isEditing = false;
+            let wasListeningBeforeEdit = false;
+
+            function enterEditMode() {
+                if (isEditing || !finalTranscript) return;
+                isEditing = true;
+                wasListeningBeforeEdit = isListening;
+                if (isListening) recognition.stop();
+
+                transcriptText.contentEditable = 'true';
+                editToolbar.classList.add('visible');
+                editButton.style.display = 'none';
+                micButton.disabled = true;
+                holdButton.disabled = true;
+
+                // Place cursor at end
+                transcriptText.focus();
+                const range = document.createRange();
+                range.selectNodeContents(transcriptText);
+                range.collapse(false);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+
+            function exitEditMode() {
+                if (!isEditing) return;
+                isEditing = false;
+
+                transcriptText.contentEditable = 'false';
+                transcriptText.blur();
+                editToolbar.classList.remove('visible');
+                editButton.style.display = '';
+                micButton.disabled = false;
+                holdButton.disabled = false;
+
+                // Sync edits back to finalTranscript
+                finalTranscript = transcriptText.innerHTML;
+                if (transcriptText.querySelector('.placeholder')) {
+                    finalTranscript = '';
+                    editButton.disabled = true;
+                }
+            }
+
+            editButton.addEventListener('click', enterEditMode);
+            editDoneButton.addEventListener('click', exitEditMode);
 
             // Recognition event handlers
             recognition.onstart = () => {
@@ -1079,6 +1208,7 @@
                         (interimTranscript ? `<span class="interim-text">${interimTranscript}</span>` : '');
 
                     transcriptText.innerHTML = displayHTML || '<div class="placeholder">Listening...</div>';
+                    editButton.disabled = !finalTranscript;
                 }
 
                 // Auto-scroll to bottom
