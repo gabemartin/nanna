@@ -96,10 +96,22 @@
             padding-right: env(safe-area-inset-right);
         }
 
-        /* When running in Safari (not from homescreen), add space for browser UI */
+        /* Safari browser: fix header at top so it doesn't scroll away */
         @media (display-mode: browser) {
+            .header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 100;
+            }
             body {
-                padding-bottom: calc(env(safe-area-inset-bottom) + 56px);
+                padding-top: calc(64px + env(safe-area-inset-top));
+            }
+            @media (max-width: 768px) {
+                body {
+                    padding-top: calc(74px + env(safe-area-inset-top));
+                }
             }
         }
 
