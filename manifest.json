@@ -1,0 +1,20 @@
+{
+  "name": "Nanna - Speech to Text",
+  "short_name": "Nanna",
+  "description": "Real-time speech to text for deaf and hearing-impaired users",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["accessibility", "utilities"],
+  "screenshots": []
+}
