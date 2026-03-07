@@ -728,13 +728,10 @@
             recognition.interimResults = true;
             recognition.lang = 'en-US';
 
-            // Request mic permission on first load so the prompt appears immediately
-            if (!localStorage.getItem('micPermissionRequested')) {
-                localStorage.setItem('micPermissionRequested', 'true');
-                navigator.mediaDevices.getUserMedia({ audio: true })
-                    .then(stream => stream.getTracks().forEach(t => t.stop()))
-                    .catch(() => {});
-            }
+            // Request mic permission on every load so the prompt appears immediately
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => stream.getTracks().forEach(t => t.stop()))
+                .catch(() => {});
 
             let isListening = false;
             let isPaused = false;
