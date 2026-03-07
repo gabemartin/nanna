@@ -96,6 +96,13 @@
             padding-right: env(safe-area-inset-right);
         }
 
+        /* When running in Safari (not from homescreen), add space for browser UI */
+        @media (display-mode: browser) {
+            body {
+                padding-bottom: calc(env(safe-area-inset-bottom) + 56px);
+            }
+        }
+
         .header {
             display: flex;
             justify-content: space-between;
