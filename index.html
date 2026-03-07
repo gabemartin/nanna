@@ -96,27 +96,23 @@
             padding-right: env(safe-area-inset-right);
         }
 
-        /* Safari/browser mode: sticky header, no overlap. Uses .in-browser class (JS) + display-mode fallback */
+        /* Browser mode: fixed header + explicit top offset so transcript never overlaps */
         body.in-browser .header {
-            position: sticky;
-            top: 0;
+            position: fixed;
+            top: env(safe-area-inset-top, 0);
+            left: 0;
+            right: 0;
             z-index: 100;
             flex-shrink: 0;
         }
         body.in-browser .transcript-container {
             flex: 1 1 auto;
             min-height: 0;
+            margin-top: calc(64px + env(safe-area-inset-top, 0));
         }
-        @media (display-mode: browser) {
-            .header {
-                position: sticky;
-                top: 0;
-                z-index: 100;
-                flex-shrink: 0;
-            }
-            .transcript-container {
-                flex: 1 1 auto;
-                min-height: 0;
+        @media (max-width: 768px) {
+            body.in-browser .transcript-container {
+                margin-top: calc(74px + env(safe-area-inset-top, 0));
             }
         }
 
@@ -644,14 +640,19 @@
         }
     </style>
 </head>
-<body>
+<body class="in-browser">
     <script>
         (function() {
-            var isStandalone = window.matchMedia('(display-mode: standalone)').matches
-                || window.navigator.standalone === true;
-            if (!isStandalone) {
-                document.documentElement.classList.add('in-browser');
-                document.body.classList.add('in-browser');
+            var isStandalone = false;
+            try {
+                isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+            } catch (e) {}
+            if (!isStandalone && window.navigator.standalone === true) {
+                isStandalone = true;
+            }
+            if (isStandalone) {
+                document.body.classList.remove('in-browser');
+                document.body.classList.add('standalone');
             }
         })();
     </script>
