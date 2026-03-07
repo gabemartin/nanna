@@ -101,7 +101,6 @@
             box-shadow: 0 2px 8px var(--shadow);
             transition: background-color 0.2s ease, box-shadow 0.2s ease;
             flex-shrink: 0;
-            order: 2;
         }
 
         .header.edit-mode {
@@ -296,6 +295,15 @@
             box-shadow: 0 4px 12px var(--shadow);
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
             border: 4px solid transparent;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .transcript-container.edit-mode {
+            cursor: text;
+            user-select: text;
+            -webkit-user-select: text;
         }
 
         .transcript-container.listening {
@@ -761,7 +769,7 @@
 
             // Hold-to-speak button handlers
             function startHoldToSpeak() {
-                if (isListening) return;
+                if (isListening || isEditing) return;
                 isHoldToSpeak = true;
                 holdButton.classList.add('holding');
                 holdButton.textContent = 'Listening...';
@@ -805,6 +813,39 @@
             // Prevent context menu on long press
             holdButton.addEventListener('contextmenu', (e) => e.preventDefault());
 
+            // Transcript area: press anywhere to record (same as hold button)
+            transcriptContainer.addEventListener('touchstart', (e) => {
+                if (!isEditing) {
+                    e.preventDefault();
+                    startHoldToSpeak();
+                }
+            }, { passive: false });
+
+            transcriptContainer.addEventListener('touchend', (e) => {
+                if (!isEditing) {
+                    e.preventDefault();
+                    stopHoldToSpeak();
+                }
+            }, { passive: false });
+
+            transcriptContainer.addEventListener('touchcancel', () => {
+                if (!isEditing) stopHoldToSpeak();
+            });
+
+            transcriptContainer.addEventListener('mousedown', (e) => {
+                if (!isEditing) startHoldToSpeak();
+            });
+            transcriptContainer.addEventListener('mouseup', (e) => {
+                if (!isEditing) stopHoldToSpeak();
+            });
+            transcriptContainer.addEventListener('mouseleave', (e) => {
+                if (!isEditing) stopHoldToSpeak();
+            });
+
+            transcriptContainer.addEventListener('contextmenu', (e) => {
+                if (!isEditing) e.preventDefault();
+            });
+
             // Clear button click handler
             clearButton.addEventListener('click', () => {
                 finalTranscript = '';
@@ -831,6 +872,7 @@
 
                 transcriptText.contentEditable = 'true';
                 header.classList.add('edit-mode');
+                transcriptContainer.classList.add('edit-mode');
 
                 // Place cursor at end
                 transcriptText.focus();
@@ -849,6 +891,7 @@
                 transcriptText.contentEditable = 'false';
                 transcriptText.blur();
                 header.classList.remove('edit-mode');
+                transcriptContainer.classList.remove('edit-mode');
 
                 // Sync edits back to finalTranscript
                 finalTranscript = transcriptText.innerHTML;
