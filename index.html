@@ -1083,8 +1083,9 @@
                 transcriptText.contentEditable = 'true';
                 editToolbar.classList.add('visible');
                 editButton.style.display = 'none';
-                micButton.disabled = true;
-                holdButton.disabled = true;
+                micButton.style.display = 'none';
+                clearButton.style.display = 'none';
+                holdButton.style.display = 'none';
 
                 // Place cursor at end
                 transcriptText.focus();
@@ -1104,8 +1105,9 @@
                 transcriptText.blur();
                 editToolbar.classList.remove('visible');
                 editButton.style.display = '';
-                micButton.disabled = false;
-                holdButton.disabled = false;
+                micButton.style.display = '';
+                clearButton.style.display = '';
+                holdButton.style.display = '';
 
                 // Sync edits back to finalTranscript
                 finalTranscript = transcriptText.innerHTML;
