@@ -565,6 +565,49 @@
             transform: none;
         }
 
+        /* Quick-access punctuation overlay */
+        .quick-actions {
+            position: fixed;
+            bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+            right: 24px;
+            z-index: 50;
+            display: none;
+            flex-direction: row;
+            gap: 8px;
+        }
+
+        .quick-actions.visible {
+            display: flex;
+        }
+
+        .quick-action-btn {
+            background: var(--btn-subtle-bg);
+            color: var(--btn-subtle-color);
+            border: none;
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            font-size: 26px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .quick-action-btn:hover {
+            background: var(--btn-subtle-hover-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-hover);
+        }
+
+        .quick-action-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
         /* Fullscreen overlay */
         .fullscreen-overlay {
             display: none;
@@ -694,6 +737,10 @@
         </div>
     </div>
 
+    <div class="quick-actions" id="quickActions">
+        <button class="quick-action-btn" id="questionMarkButton" title="Append question mark">?</button>
+    </div>
+
     <div class="fullscreen-overlay" id="fullscreenOverlay">
         <button class="fullscreen-close" id="fullscreenClose" title="Exit full screen"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25" /></svg></button>
         <div class="fullscreen-text" id="fullscreenText"></div>
@@ -750,6 +797,8 @@
             const editDoneButton = document.getElementById('editDoneButton');
             const header = document.getElementById('header');
             const fullscreenButton = document.getElementById('fullscreenButton');
+            const questionMarkButton = document.getElementById('questionMarkButton');
+            const quickActions = document.getElementById('quickActions');
             const fullscreenOverlay = document.getElementById('fullscreenOverlay');
             const fullscreenClose = document.getElementById('fullscreenClose');
             const fullscreenText = document.getElementById('fullscreenText');
@@ -969,9 +1018,19 @@
                 editButton.disabled = true;
                 copyButton.disabled = true;
                 fullscreenButton.disabled = true;
+                quickActions.classList.remove('visible');
                 errorMessage.style.display = 'none';
                 lastSpeechTime = Date.now(); // Reset pause timer
                 updateFontSize(currentFontSize); // Update placeholder font size
+            });
+
+            // Question mark button
+            questionMarkButton.addEventListener('click', () => {
+                if (!finalTranscript) return;
+                finalTranscript = finalTranscript
+                    .replace(/(<hr class="speech-separator">|\s)*$/, '') + '?';
+                transcriptText.innerHTML = finalTranscript;
+                transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
             });
 
             // Edit mode
@@ -987,6 +1046,7 @@
                 transcriptText.contentEditable = 'true';
                 header.classList.add('edit-mode');
                 transcriptContainer.classList.add('edit-mode');
+                quickActions.classList.remove('visible');
 
                 // Place cursor at end
                 transcriptText.focus();
@@ -1015,6 +1075,7 @@
                 editButton.disabled = !finalTranscript;
                 copyButton.disabled = !finalTranscript;
                 fullscreenButton.disabled = !finalTranscript;
+                quickActions.classList.toggle('visible', !!finalTranscript);
             }
 
             editButton.addEventListener('click', enterEditMode);
@@ -1107,6 +1168,7 @@
                 editButton.disabled = !finalTranscript;
                 copyButton.disabled = !finalTranscript;
                 fullscreenButton.disabled = !finalTranscript;
+                quickActions.classList.toggle('visible', !!finalTranscript);
 
                 // Auto-scroll to bottom
                 transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
