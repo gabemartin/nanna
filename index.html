@@ -1031,6 +1031,7 @@
                     .replace(/(<hr class="speech-separator">|\s)*$/, '') + '?';
                 transcriptText.innerHTML = finalTranscript;
                 transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
+                quickActions.classList.remove('visible');
             });
 
             // Edit mode
