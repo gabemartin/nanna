@@ -698,6 +698,12 @@
                 document.body.classList.add('standalone');
             }
         })();
+
+        document.addEventListener('beforeinput', function(e) {
+            if (e.inputType === 'historyUndo' || e.inputType === 'historyRedo') {
+                e.preventDefault();
+            }
+        });
     </script>
     <div class="header" id="header">
         <div class="header-content">
@@ -1189,8 +1195,7 @@
                         errorMsg = 'No speech detected. Please try speaking again.';
                         break;
                     case 'audio-capture':
-                        errorMsg = 'No microphone found. Please check your microphone connection.';
-                        break;
+                        return;
                     case 'not-allowed':
                         errorMsg = 'Microphone access denied. Please allow microphone access in your browser settings.';
                         break;
