@@ -699,11 +699,6 @@
             }
         })();
 
-        document.addEventListener('beforeinput', function(e) {
-            if (e.inputType === 'historyUndo' || e.inputType === 'historyRedo') {
-                e.preventDefault();
-            }
-        });
     </script>
     <div class="header" id="header">
         <div class="header-content">
@@ -787,7 +782,7 @@
 
             const holdButton = document.getElementById('holdButton');
             const clearButton = document.getElementById('clearButton');
-            const transcriptText = document.getElementById('transcriptText');
+            let transcriptText = document.getElementById('transcriptText');
             const transcriptContainer = document.getElementById('transcriptContainer');
             const statusDot = document.getElementById('statusDot');
             const statusText = document.getElementById('statusText');
@@ -1069,13 +1064,21 @@
                 if (!isEditing) return;
                 isEditing = false;
 
-                transcriptText.contentEditable = 'false';
-                transcriptText.blur();
+                // Sync edits back to finalTranscript before replacing element
+                finalTranscript = transcriptText.innerHTML;
+
+                // Replace the element with a fresh clone to purge iOS's undo history.
+                // Setting contentEditable=false alone doesn't clear the undo stack,
+                // so shake-to-undo would still trigger the system dialog.
+                const parent = transcriptText.parentNode;
+                const fresh = transcriptText.cloneNode(true);
+                fresh.contentEditable = 'false';
+                fresh.blur();
+                parent.replaceChild(fresh, transcriptText);
+                transcriptText = fresh;
+
                 header.classList.remove('edit-mode');
                 transcriptContainer.classList.remove('edit-mode');
-
-                // Sync edits back to finalTranscript
-                finalTranscript = transcriptText.innerHTML;
                 if (transcriptText.querySelector('.placeholder')) {
                     finalTranscript = '';
                 }
