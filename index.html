@@ -750,15 +750,6 @@
             white-space: nowrap;
         }
 
-        .landscape-hold-button {
-            position: absolute;
-            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-            right: calc(16px + env(safe-area-inset-right, 0px));
-            width: auto;
-            padding: 12px 16px;
-            touch-action: none;
-        }
-
         .landscape-placeholder {
             color: var(--text-placeholder);
             font-style: italic;
@@ -840,10 +831,6 @@
             <div class="landscape-interim" id="landscapeInterim"></div>
         </div>
         <div class="landscape-counter" id="landscapeCounter"></div>
-        <button class="hold-button landscape-hold-button" id="landscapeHoldButton">
-            <span class="hold-icon-off"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" /></svg></span>
-            <span class="hold-icon-listening"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" /></svg></span>
-        </button>
     </div>
 
     <script>
@@ -907,7 +894,6 @@
             const fullscreenClose = document.getElementById('fullscreenClose');
             const fullscreenText = document.getElementById('fullscreenText');
             const landscapeOverlay = document.getElementById('landscapeOverlay');
-            const landscapeHoldButton = document.getElementById('landscapeHoldButton');
 
             // Theme management
             const savedTheme = localStorage.getItem('theme') || 'light';
@@ -1042,14 +1028,12 @@
                 if (isListening || isEditing) return;
                 isHoldToSpeak = true;
                 holdButton.classList.add('holding');
-                landscapeHoldButton.classList.add('holding');
                 try {
                     recognition.start();
                 } catch (error) {
                     console.error('Hold to speak start error:', error);
                     isHoldToSpeak = false;
                     holdButton.classList.remove('holding');
-                    landscapeHoldButton.classList.remove('holding');
                 }
             }
 
@@ -1057,7 +1041,6 @@
                 if (!isHoldToSpeak) return;
                 isHoldToSpeak = false;
                 holdButton.classList.remove('holding');
-                landscapeHoldButton.classList.remove('holding');
                 recognition.stop();
             }
 
@@ -1241,7 +1224,6 @@
                 isListening = false;
                 isHoldToSpeak = false;
                 holdButton.classList.remove('holding');
-                landscapeHoldButton.classList.remove('holding');
                 transcriptContainer.classList.remove('listening');
                 statusDot.classList.remove('active');
                 statusText.textContent = 'Ready';
@@ -1446,15 +1428,6 @@
                     navigateLandscapeWord(dx < 0 ? 1 : -1);
                 }
             }, { passive: true });
-
-            // Landscape hold button mirrors the original hold button
-            landscapeHoldButton.addEventListener('touchstart', (e) => { e.preventDefault(); startHoldToSpeak(); }, { passive: false });
-            landscapeHoldButton.addEventListener('touchend',   (e) => { e.preventDefault(); stopHoldToSpeak(); },  { passive: false });
-            landscapeHoldButton.addEventListener('touchcancel', stopHoldToSpeak);
-            landscapeHoldButton.addEventListener('mousedown', startHoldToSpeak);
-            landscapeHoldButton.addEventListener('mouseup',   stopHoldToSpeak);
-            landscapeHoldButton.addEventListener('mouseleave', stopHoldToSpeak);
-            landscapeHoldButton.addEventListener('contextmenu', (e) => e.preventDefault());
 
         }
     </script>
