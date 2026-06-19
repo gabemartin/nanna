@@ -175,10 +175,10 @@
             }
         }
 
-        .clear-button, .edit-button, .copy-button, .fullscreen-button {
+        .clear-button, .edit-button, .copy-button, .fullscreen-button, .correct-button {
             background: var(--btn-subtle-bg);
             color: var(--btn-subtle-color);
-            border: none; 
+            border: none;
             font-size: 18px;
             font-weight: 400;
             border-radius: 8px;
@@ -194,7 +194,7 @@
             gap: 8px;
         }
 
-        .clear-button:hover, .edit-button:hover, .copy-button:hover, .fullscreen-button:hover {
+        .clear-button:hover, .edit-button:hover, .copy-button:hover, .fullscreen-button:hover, .correct-button:hover {
             background: var(--btn-subtle-hover-bg);
             transform: translateY(-2px);
             box-shadow: none;
@@ -559,10 +559,245 @@
             outline: none;
             caret-color: #1976D2;
         }
-        .edit-button:disabled, .copy-button:disabled, .fullscreen-button:disabled {
+        .edit-button:disabled, .copy-button:disabled, .fullscreen-button:disabled, .correct-button:disabled {
             opacity: 0.35;
             cursor: not-allowed;
             transform: none;
+        }
+
+        /* Active (engaged) state for the correct toggle */
+        .correct-button.active {
+            background: var(--hold-button-bg);
+            color: var(--hold-button-color);
+        }
+        .correct-button.active:hover {
+            background: var(--hold-button-bg);
+        }
+
+        /* ============================================================
+           WORD-CORRECTION FEATURE
+           ============================================================ */
+
+        /* Tappable words (only shown while correction mode is active) */
+        .transcript-container.correct-mode .transcript-text .word {
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-decoration-color: var(--text-secondary);
+            text-underline-offset: 6px;
+            transition: background-color 0.15s ease;
+        }
+        .transcript-container.correct-mode .transcript-text .word:hover,
+        .transcript-container.correct-mode .transcript-text .word.selected {
+            background: var(--btn-subtle-hover-bg);
+        }
+        .transcript-container.correct-mode {
+            box-shadow: inset 0 0 0 3px var(--hold-button-bg);
+        }
+
+        /* Suggestion popover */
+        .correct-popover {
+            display: none;
+            position: fixed;
+            z-index: 2500;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px var(--shadow-hover);
+            min-width: 200px;
+            max-width: 320px;
+            overflow: hidden;
+        }
+        .correct-popover.visible {
+            display: block;
+        }
+        .correct-popover-header {
+            padding: 10px 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .correct-popover-header b {
+            color: var(--text-primary);
+        }
+        .correct-popover-list {
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+        .correct-suggestion {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 14px 16px;
+            font-size: 20px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .correct-suggestion:hover {
+            background: var(--btn-subtle-hover-bg);
+        }
+        .correct-suggestion .tag {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--hold-button-bg);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .correct-suggestion.keep {
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            font-size: 16px;
+        }
+        .correct-suggestion.empty {
+            color: var(--text-secondary);
+            font-size: 16px;
+            cursor: default;
+            font-style: italic;
+        }
+        .correct-popover-footer {
+            display: flex;
+            border-top: 1px solid var(--border-color);
+        }
+        .correct-popover-action {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--hold-button-bg);
+            cursor: pointer;
+        }
+        .correct-popover-action + .correct-popover-action {
+            border-left: 1px solid var(--border-color);
+        }
+        .correct-popover-action:hover {
+            background: var(--btn-subtle-hover-bg);
+        }
+
+        /* My words manager modal */
+        .my-words-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .my-words-overlay.visible {
+            display: flex;
+        }
+        .my-words-modal {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 520px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 12px 40px var(--shadow-hover);
+        }
+        .my-words-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            font-size: 20px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .my-words-close {
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            line-height: 1;
+            padding: 4px 8px;
+        }
+        .my-words-modal-body {
+            padding: 16px 20px;
+            overflow-y: auto;
+        }
+        .my-words-section + .my-words-section {
+            margin-top: 24px;
+        }
+        .my-words-section h3 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        .my-words-hint {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        .my-words-add {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .my-words-add input {
+            flex: 1;
+            min-width: 0;
+            padding: 10px 12px;
+            font-size: 16px;
+            font-family: inherit;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .my-words-arrow {
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+        .my-words-add-btn {
+            flex-shrink: 0;
+            background: var(--hold-button-bg);
+            color: var(--hold-button-color);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 15px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .my-words-list {
+            list-style: none;
+        }
+        .my-words-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 16px;
+        }
+        .my-words-list .remove-word {
+            background: none;
+            border: none;
+            color: var(--attn);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        .my-words-empty {
+            color: var(--text-secondary);
+            font-style: italic;
+            font-size: 14px;
+            padding: 8px 0;
         }
 
         /* Quick-access punctuation overlay */
@@ -784,7 +1019,8 @@
                 <button class="clear-button" id="clearButton"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg></button>
                 <button class="copy-button" id="copyButton" title="Copy text to clipboard" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z" /></svg> <span id="copyButtonText">Copy</span></button>
                 <button class="edit-button" id="editButton" title="Edit transcript" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg></button>
-                <button class="fullscreen-button" id="fullscreenButton" title="View full screen" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg></button></div>
+                <button class="fullscreen-button" id="fullscreenButton" title="View full screen" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg></button>
+                <button class="correct-button" id="correctButton" title="Tap words to correct" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="svg-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z" /></svg></button></div>
             <div class="header-right hide-on-mobile">
                 <div class="font-controls">
                     <span class="font-size-label sr-only">Text Size:</span>
@@ -832,6 +1068,51 @@
         </div>
         <div class="landscape-counter" id="landscapeCounter"></div>
     </div>
+
+    <!-- Word-correction suggestion popover -->
+    <div class="correct-popover" id="correctPopover">
+        <div class="correct-popover-header" id="correctPopoverHeader"></div>
+        <div class="correct-popover-list" id="correctPopoverList"></div>
+        <div class="correct-popover-footer">
+            <button class="correct-popover-action" id="addToMyWordsButton">＋ Add to my words…</button>
+            <button class="correct-popover-action" id="manageMyWordsButton">My words</button>
+        </div>
+    </div>
+
+    <!-- "My words" manager: replacement pairs + custom vocabulary -->
+    <div class="my-words-overlay" id="myWordsOverlay">
+        <div class="my-words-modal">
+            <div class="my-words-modal-header">
+                <span>My words</span>
+                <button class="my-words-close" id="myWordsClose" title="Close">✕</button>
+            </div>
+            <div class="my-words-modal-body">
+                <section class="my-words-section">
+                    <h3>Replacement pairs</h3>
+                    <p class="my-words-hint">When a word is heard wrong, always offer your replacement first.</p>
+                    <div class="my-words-add">
+                        <input type="text" id="pairHeardInput" placeholder="heard word" autocomplete="off" autocapitalize="none" spellcheck="false">
+                        <span class="my-words-arrow">→</span>
+                        <input type="text" id="pairReplaceInput" placeholder="correct word" autocomplete="off" spellcheck="false">
+                        <button class="my-words-add-btn" id="addPairButton">Add</button>
+                    </div>
+                    <ul class="my-words-list" id="pairsList"></ul>
+                </section>
+                <section class="my-words-section">
+                    <h3>My vocabulary</h3>
+                    <p class="my-words-hint">Names &amp; terms to surface as suggestions for similar-sounding words.</p>
+                    <div class="my-words-add">
+                        <input type="text" id="vocabInput" placeholder="add a word or name" autocomplete="off" spellcheck="false">
+                        <button class="my-words-add-btn" id="addVocabButton">Add</button>
+                    </div>
+                    <ul class="my-words-list" id="vocabList"></ul>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="lib/double-metaphone.js"></script>
+    <script src="lib/wordlist.js"></script>
 
     <script>
         // Check for browser support
@@ -1066,27 +1347,29 @@
             // Prevent context menu on long press
             holdButton.addEventListener('contextmenu', (e) => e.preventDefault());
 
-            // Transcript area: press anywhere to record (same as hold button)
+            // Transcript area: press anywhere to record (same as hold button).
+            // In correction mode, taps select words instead — so skip these handlers
+            // (and crucially don't preventDefault, so word clicks still fire).
             transcriptContainer.addEventListener('touchstart', (e) => {
-                if (!isEditing) {
+                if (!isEditing && !correctMode) {
                     e.preventDefault();
                     startHoldToSpeak();
                 }
             }, { passive: false });
 
             transcriptContainer.addEventListener('touchend', (e) => {
-                if (!isEditing) {
+                if (!isEditing && !correctMode) {
                     e.preventDefault();
                     stopHoldToSpeak();
                 }
             }, { passive: false });
 
             transcriptContainer.addEventListener('touchcancel', () => {
-                if (!isEditing) stopHoldToSpeak();
+                if (!isEditing && !correctMode) stopHoldToSpeak();
             });
 
             transcriptContainer.addEventListener('mousedown', (e) => {
-                if (!isEditing) startHoldToSpeak();
+                if (!isEditing && !correctMode) startHoldToSpeak();
             });
             transcriptContainer.addEventListener('mouseup', (e) => {
                 if (!isEditing) stopHoldToSpeak();
@@ -1102,6 +1385,8 @@
             // Clear button click handler
             clearButton.addEventListener('click', () => {
                 finalTranscript = '';
+                hidePopover();
+                if (correctMode) setCorrectMode(false);
                 if (isListening) {
                     transcriptText.innerHTML = '<div class="placeholder">Listening...</div>';
                 } else {
@@ -1110,6 +1395,7 @@
                 editButton.disabled = true;
                 copyButton.disabled = true;
                 fullscreenButton.disabled = true;
+                correctButton.disabled = true;
                 quickActions.classList.remove('visible');
                 errorMessage.style.display = 'none';
                 lastSpeechTime = Date.now(); // Reset pause timer
@@ -1122,7 +1408,7 @@
                 if (!finalTranscript) return;
                 finalTranscript = finalTranscript
                     .replace(/(<hr class="speech-separator">|\s)*$/, '') + '?';
-                transcriptText.innerHTML = finalTranscript;
+                renderTranscript('');
                 transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
                 syncLandscapeWords(false);
                 quickActions.classList.remove('visible');
@@ -1134,6 +1420,8 @@
 
             function enterEditMode() {
                 if (isEditing || !finalTranscript) return;
+                if (correctMode) setCorrectMode(false);   // removes word spans before contentEditable
+                hidePopover();
                 isEditing = true;
                 wasListeningBeforeEdit = isListening;
                 if (isListening) recognition.stop();
@@ -1180,6 +1468,7 @@
                 copyButton.disabled = !finalTranscript;
                 fullscreenButton.disabled = !finalTranscript;
                 quickActions.classList.toggle('visible', !!finalTranscript);
+                refreshCorrectAvail();
             }
 
             editButton.addEventListener('click', enterEditMode);
@@ -1201,6 +1490,8 @@
             // Recognition event handlers
             recognition.onstart = () => {
                 isListening = true;
+                if (correctMode) setCorrectMode(false);   // recording and correcting are mutually exclusive
+                hidePopover();
                 transcriptContainer.classList.add('listening');
                 statusDot.classList.add('active');
                 statusText.textContent = 'Listening...';
@@ -1227,6 +1518,7 @@
                 transcriptContainer.classList.remove('listening');
                 statusDot.classList.remove('active');
                 statusText.textContent = 'Ready';
+                refreshCorrectAvail();
                 if (landscapeActive) {
                     document.getElementById('landscapeInterim').textContent = '';
                     updateLandscapeDisplay();
@@ -1273,11 +1565,8 @@
                     }
                 }
 
-                // Update display
-                const displayHTML = finalTranscript +
-                    (interimTranscript ? `<span class="interim-text">${interimTranscript}</span>` : '');
-
-                transcriptText.innerHTML = displayHTML || '<div class="placeholder">Listening...</div>';
+                // Update display (word-wrapping applied only while in correction mode)
+                renderTranscript(interimTranscript);
                 editButton.disabled = !finalTranscript;
                 copyButton.disabled = !finalTranscript;
                 fullscreenButton.disabled = !finalTranscript;
@@ -1428,6 +1717,512 @@
                     navigateLandscapeWord(dx < 0 ? 1 : -1);
                 }
             }, { passive: true });
+
+            // ============================================================
+            // WORD CORRECTION  (tap a word → most-likely replacements)
+            // ============================================================
+
+            let correctMode = false;
+            let activeWordSpan = null;       // the .word span currently being corrected
+            let activeWordIndex = -1;        // its index among all transcript words
+
+            const correctButton      = document.getElementById('correctButton');
+            const correctPopover      = document.getElementById('correctPopover');
+            const correctPopoverHeader= document.getElementById('correctPopoverHeader');
+            const correctPopoverList  = document.getElementById('correctPopoverList');
+            const addToMyWordsButton  = document.getElementById('addToMyWordsButton');
+            const manageMyWordsButton = document.getElementById('manageMyWordsButton');
+
+            // ---- Custom dictionaries (persisted in localStorage) ----
+            // Replacement pairs: { heardLowercase: "Correct Word" }  (always win)
+            // Vocabulary: ["Name", "Term", ...]  (surfaced as phonetic suggestions)
+            let customPairs = {};
+            let customVocab = [];
+            try { customPairs = JSON.parse(localStorage.getItem('nannaCustomCorrections')) || {}; } catch (e) { customPairs = {}; }
+            try { customVocab = JSON.parse(localStorage.getItem('nannaCustomVocab')) || []; } catch (e) { customVocab = []; }
+            if (typeof customPairs !== 'object' || customPairs === null) customPairs = {};
+            if (!Array.isArray(customVocab)) customVocab = [];
+
+            function saveCustomDicts() {
+                try {
+                    localStorage.setItem('nannaCustomCorrections', JSON.stringify(customPairs));
+                    localStorage.setItem('nannaCustomVocab', JSON.stringify(customVocab));
+                } catch (e) {}
+            }
+
+            // ---- Phonetic suggestion engine ----
+            const phoneticIndex = new Map();   // metaphone code -> [{ word, rank }]
+            const vocabLowerSet = new Set();   // lowercased custom-vocab words (for boost)
+            let indexBuilt = false;
+
+            function phoneticCodes(word) {
+                if (typeof doubleMetaphone !== 'function') return [];
+                const codes = doubleMetaphone(word);
+                const out = [];
+                for (const c of codes) {
+                    if (c && out.indexOf(c) === -1) out.push(c);
+                }
+                return out;
+            }
+
+            function addToIndex(word, rank) {
+                for (const code of phoneticCodes(word)) {
+                    let bucket = phoneticIndex.get(code);
+                    if (!bucket) { bucket = []; phoneticIndex.set(code, bucket); }
+                    bucket.push({ word: word, rank: rank });
+                }
+            }
+
+            function buildPhoneticIndex() {
+                phoneticIndex.clear();
+                vocabLowerSet.clear();
+                const list = window.NANNA_WORDLIST || [];
+                for (let i = 0; i < list.length; i++) {
+                    addToIndex(list[i], i);   // rank = frequency position (lower = more common)
+                }
+                // Custom vocabulary gets top priority (rank -1)
+                for (const w of customVocab) {
+                    const lower = w.toLowerCase();
+                    if (vocabLowerSet.has(lower)) continue;
+                    vocabLowerSet.add(lower);
+                    addToIndex(lower, -1);
+                }
+                indexBuilt = true;
+            }
+
+            function rebuildVocabInIndex() {
+                // Vocabulary changed — cheapest correct path is a full rebuild.
+                if (indexBuilt) buildPhoneticIndex();
+            }
+
+            function levenshtein(a, b) {
+                const m = a.length, n = b.length;
+                if (m === 0) return n;
+                if (n === 0) return m;
+                let prev = new Array(n + 1);
+                let curr = new Array(n + 1);
+                for (let j = 0; j <= n; j++) prev[j] = j;
+                for (let i = 1; i <= m; i++) {
+                    curr[0] = i;
+                    for (let j = 1; j <= n; j++) {
+                        const cost = a.charCodeAt(i - 1) === b.charCodeAt(j - 1) ? 0 : 1;
+                        curr[j] = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost);
+                    }
+                    const tmp = prev; prev = curr; curr = tmp;
+                }
+                return prev[n];
+            }
+
+            // Split a raw token into [leading, core, trailing] so punctuation/case is preserved.
+            function splitToken(raw) {
+                const m = raw.match(/^([^A-Za-z']*)([A-Za-z']*)(.*)$/);
+                if (!m) return { lead: '', core: raw, trail: '' };
+                return { lead: m[1], core: m[2], trail: m[3] };
+            }
+
+            function applyCasing(original, replacement) {
+                if (!original) return replacement;
+                if (original === original.toUpperCase() && original.length > 1) {
+                    return replacement.toUpperCase();
+                }
+                if (original[0] === original[0].toUpperCase()) {
+                    return replacement.charAt(0).toUpperCase() + replacement.slice(1);
+                }
+                return replacement;
+            }
+
+            // Return up to `max` ranked replacement suggestions for a raw word token.
+            function getSuggestions(rawWord, max) {
+                if (!indexBuilt) buildPhoneticIndex();
+                max = max || 6;
+                const parts = splitToken(rawWord);
+                const core = parts.core;
+                const lower = core.toLowerCase().replace(/[^a-z']/g, '');
+                const results = [];
+                const seen = new Set();
+
+                function push(word, score, tag) {
+                    const cased = applyCasing(core, word);
+                    const key = cased.toLowerCase();
+                    if (key === lower) return;          // skip the original word itself
+                    if (seen.has(key)) return;
+                    seen.add(key);
+                    results.push({ word: cased, score: score, tag: tag });
+                }
+
+                // 1. Explicit replacement pairs always win.
+                if (Object.prototype.hasOwnProperty.call(customPairs, lower)) {
+                    push(customPairs[lower], 1e9, 'my word');
+                }
+
+                if (!lower) return results.slice(0, max);
+
+                // 2. Phonetic candidates sharing a Double Metaphone code.
+                const candidates = new Map();   // word -> best rank
+                for (const code of phoneticCodes(lower)) {
+                    const bucket = phoneticIndex.get(code);
+                    if (!bucket) continue;
+                    for (const entry of bucket) {
+                        const prev = candidates.get(entry.word);
+                        if (prev === undefined || entry.rank < prev) {
+                            candidates.set(entry.word, entry.rank);
+                        }
+                    }
+                }
+
+                // 3. Score: closeness (edit distance) dominates, frequency & custom-vocab break ties.
+                const scored = [];
+                candidates.forEach((rank, word) => {
+                    if (word === lower) return;
+                    const dist = levenshtein(lower, word);
+                    if (dist > 4) return;                      // too dissimilar to be a likely mishearing
+                    const isVocab = rank < 0;
+                    const freqScore = isVocab ? 1000 : Math.max(0, 100 - rank / 50);
+                    const score = (isVocab ? 500 : 0) + (5 - dist) * 100 + freqScore;
+                    scored.push({ word: word, score: score, tag: isVocab ? 'my word' : null });
+                });
+                scored.sort((a, b) => b.score - a.score);
+                for (const s of scored) push(s.word, s.score, s.tag);
+
+                return results.slice(0, max);
+            }
+
+            // ---- Render transcript with optional tappable word spans ----
+            function escapeHtml(s) {
+                return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+
+            // Wrap every whitespace-delimited word in finalTranscript HTML with a
+            // <span class="word" data-wi="N"> while preserving <hr> separators.
+            function wrapWordsHtml(html) {
+                const tmp = document.createElement('div');
+                tmp.innerHTML = html;
+                let wi = 0;
+                const walk = (node) => {
+                    const children = Array.prototype.slice.call(node.childNodes);
+                    for (const child of children) {
+                        if (child.nodeType === Node.TEXT_NODE) {
+                            const text = child.nodeValue;
+                            if (!/\S/.test(text)) continue;
+                            const frag = document.createDocumentFragment();
+                            // Split keeping whitespace so spacing is preserved exactly.
+                            const tokens = text.split(/(\s+)/);
+                            for (const tok of tokens) {
+                                if (tok === '') continue;
+                                if (/^\s+$/.test(tok)) {
+                                    frag.appendChild(document.createTextNode(tok));
+                                } else {
+                                    const span = document.createElement('span');
+                                    span.className = 'word';
+                                    span.setAttribute('data-wi', String(wi++));
+                                    span.textContent = tok;
+                                    frag.appendChild(span);
+                                }
+                            }
+                            node.replaceChild(frag, child);
+                        } else if (child.nodeType === Node.ELEMENT_NODE && child.className !== 'interim-text') {
+                            walk(child);
+                        }
+                    }
+                };
+                walk(tmp);
+                return tmp.innerHTML;
+            }
+
+            // Single source of truth for painting the transcript element.
+            function renderTranscript(interimTranscript) {
+                const base = (correctMode && !isEditing && finalTranscript)
+                    ? wrapWordsHtml(finalTranscript)
+                    : finalTranscript;
+                const interim = interimTranscript
+                    ? `<span class="interim-text">${interimTranscript}</span>`
+                    : '';
+                const html = base + interim;
+                transcriptText.innerHTML = html ||
+                    `<div class="placeholder">${isListening ? 'Listening...' : 'Hold to speak'}</div>`;
+                refreshCorrectAvail();
+            }
+
+            function refreshCorrectAvail() {
+                correctButton.disabled = !finalTranscript || isListening || isEditing;
+                if (correctButton.disabled && correctMode) setCorrectMode(false);
+            }
+
+            // Replace the Nth transcript word in finalTranscript with `newCore`,
+            // operating on text nodes so <hr> separators and structure are preserved.
+            function replaceWordAt(targetIndex, newCore) {
+                const tmp = document.createElement('div');
+                tmp.innerHTML = finalTranscript;
+                let wi = 0;
+                let done = false;
+                const walk = (node) => {
+                    const children = Array.prototype.slice.call(node.childNodes);
+                    for (const child of children) {
+                        if (done) return;
+                        if (child.nodeType === Node.TEXT_NODE) {
+                            const text = child.nodeValue;
+                            if (!/\S/.test(text)) continue;
+                            const tokens = text.split(/(\s+)/);
+                            let changed = false;
+                            for (let k = 0; k < tokens.length; k++) {
+                                if (/^\s*$/.test(tokens[k])) continue;
+                                if (wi === targetIndex) {
+                                    const parts = splitToken(tokens[k]);
+                                    tokens[k] = parts.lead + newCore + parts.trail;
+                                    changed = true;
+                                    done = true;
+                                    wi++;
+                                    break;
+                                }
+                                wi++;
+                            }
+                            if (changed) child.nodeValue = tokens.join('');
+                        } else if (child.nodeType === Node.ELEMENT_NODE && child.className !== 'interim-text') {
+                            walk(child);
+                        }
+                        if (done) return;
+                    }
+                };
+                walk(tmp);
+                finalTranscript = tmp.innerHTML;
+            }
+
+            // ---- Popover ----
+            function hidePopover() {
+                correctPopover.classList.remove('visible');
+                if (activeWordSpan) activeWordSpan.classList.remove('selected');
+                activeWordSpan = null;
+                activeWordIndex = -1;
+            }
+
+            function positionPopover(targetRect) {
+                correctPopover.style.visibility = 'hidden';
+                correctPopover.classList.add('visible');
+                const pop = correctPopover.getBoundingClientRect();
+                const margin = 8;
+                let left = targetRect.left + targetRect.width / 2 - pop.width / 2;
+                left = Math.max(margin, Math.min(left, window.innerWidth - pop.width - margin));
+                let top = targetRect.bottom + margin;
+                if (top + pop.height > window.innerHeight - margin) {
+                    top = targetRect.top - pop.height - margin;   // flip above
+                }
+                if (top < margin) top = margin;
+                correctPopover.style.left = left + 'px';
+                correctPopover.style.top = top + 'px';
+                correctPopover.style.visibility = 'visible';
+            }
+
+            function openPopoverForWord(span) {
+                const raw = span.textContent;
+                activeWordSpan = span;
+                activeWordIndex = parseInt(span.getAttribute('data-wi'), 10);
+                span.classList.add('selected');
+
+                correctPopoverHeader.innerHTML = 'Replace <b>' + escapeHtml(raw) + '</b>';
+                correctPopoverList.innerHTML = '';
+
+                const suggestions = getSuggestions(raw, 6);
+                if (suggestions.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'correct-suggestion empty';
+                    empty.textContent = 'No suggestions found';
+                    correctPopoverList.appendChild(empty);
+                } else {
+                    for (const s of suggestions) {
+                        const btn = document.createElement('button');
+                        btn.className = 'correct-suggestion';
+                        const label = document.createElement('span');
+                        label.textContent = s.word;
+                        btn.appendChild(label);
+                        if (s.tag) {
+                            const tag = document.createElement('span');
+                            tag.className = 'tag';
+                            tag.textContent = s.tag;
+                            btn.appendChild(tag);
+                        }
+                        btn.addEventListener('click', () => chooseReplacement(s.word));
+                        correctPopoverList.appendChild(btn);
+                    }
+                }
+
+                // Always offer to keep the original.
+                const keep = document.createElement('button');
+                keep.className = 'correct-suggestion keep';
+                keep.textContent = 'Keep "' + raw + '"';
+                keep.addEventListener('click', hidePopover);
+                correctPopoverList.appendChild(keep);
+
+                positionPopover(span.getBoundingClientRect());
+            }
+
+            function chooseReplacement(newWord) {
+                if (activeWordIndex < 0) { hidePopover(); return; }
+                replaceWordAt(activeWordIndex, newWord);
+                hidePopover();
+                renderTranscript('');
+                syncLandscapeWords(false);
+            }
+
+            // Tap handling for word spans (delegated)
+            transcriptText.addEventListener('click', (e) => {
+                if (!correctMode || isEditing) return;
+                const span = e.target.closest && e.target.closest('.word');
+                if (!span || !transcriptText.contains(span)) return;
+                e.preventDefault();
+                e.stopPropagation();
+                if (span === activeWordSpan) { hidePopover(); return; }
+                hidePopover();
+                openPopoverForWord(span);
+            });
+
+            // Dismiss popover when tapping elsewhere
+            document.addEventListener('click', (e) => {
+                if (!correctPopover.classList.contains('visible')) return;
+                if (correctPopover.contains(e.target)) return;
+                if (e.target.closest && e.target.closest('.word')) return;
+                hidePopover();
+            });
+
+            function setCorrectMode(on) {
+                if (on === correctMode) return;
+                correctMode = on;
+                correctButton.classList.toggle('active', on);
+                transcriptContainer.classList.toggle('correct-mode', on);
+                if (!on) hidePopover();
+                renderTranscript('');
+            }
+
+            correctButton.addEventListener('click', () => {
+                if (correctButton.disabled) return;
+                setCorrectMode(!correctMode);
+            });
+
+            // ---- "My words" manager modal ----
+            const myWordsOverlay  = document.getElementById('myWordsOverlay');
+            const myWordsClose     = document.getElementById('myWordsClose');
+            const pairHeardInput   = document.getElementById('pairHeardInput');
+            const pairReplaceInput = document.getElementById('pairReplaceInput');
+            const addPairButton    = document.getElementById('addPairButton');
+            const pairsList        = document.getElementById('pairsList');
+            const vocabInput       = document.getElementById('vocabInput');
+            const addVocabButton   = document.getElementById('addVocabButton');
+            const vocabList        = document.getElementById('vocabList');
+
+            function renderMyWordsLists() {
+                pairsList.innerHTML = '';
+                const keys = Object.keys(customPairs);
+                if (keys.length === 0) {
+                    const li = document.createElement('li');
+                    li.className = 'my-words-empty';
+                    li.textContent = 'No replacement pairs yet.';
+                    pairsList.appendChild(li);
+                } else {
+                    for (const heard of keys) {
+                        const li = document.createElement('li');
+                        const label = document.createElement('span');
+                        label.textContent = heard + ' → ' + customPairs[heard];
+                        const rm = document.createElement('button');
+                        rm.className = 'remove-word';
+                        rm.textContent = '✕';
+                        rm.addEventListener('click', () => {
+                            delete customPairs[heard];
+                            saveCustomDicts();
+                            renderMyWordsLists();
+                        });
+                        li.appendChild(label);
+                        li.appendChild(rm);
+                        pairsList.appendChild(li);
+                    }
+                }
+
+                vocabList.innerHTML = '';
+                if (customVocab.length === 0) {
+                    const li = document.createElement('li');
+                    li.className = 'my-words-empty';
+                    li.textContent = 'No custom words yet.';
+                    vocabList.appendChild(li);
+                } else {
+                    for (const word of customVocab.slice()) {
+                        const li = document.createElement('li');
+                        const label = document.createElement('span');
+                        label.textContent = word;
+                        const rm = document.createElement('button');
+                        rm.className = 'remove-word';
+                        rm.textContent = '✕';
+                        rm.addEventListener('click', () => {
+                            customVocab = customVocab.filter(w => w !== word);
+                            saveCustomDicts();
+                            rebuildVocabInIndex();
+                            renderMyWordsLists();
+                        });
+                        li.appendChild(label);
+                        li.appendChild(rm);
+                        vocabList.appendChild(li);
+                    }
+                }
+            }
+
+            function openMyWords(prefillHeard) {
+                pairHeardInput.value = prefillHeard ? prefillHeard.toLowerCase().replace(/[^a-z']/g, '') : '';
+                pairReplaceInput.value = '';
+                vocabInput.value = '';
+                renderMyWordsLists();
+                myWordsOverlay.classList.add('visible');
+                (prefillHeard ? pairReplaceInput : pairHeardInput).focus();
+            }
+
+            function closeMyWords() {
+                myWordsOverlay.classList.remove('visible');
+            }
+
+            addPairButton.addEventListener('click', () => {
+                const heard = pairHeardInput.value.trim().toLowerCase().replace(/[^a-z']/g, '');
+                const replace = pairReplaceInput.value.trim();
+                if (!heard || !replace) return;
+                customPairs[heard] = replace;
+                saveCustomDicts();
+                pairHeardInput.value = '';
+                pairReplaceInput.value = '';
+                renderMyWordsLists();
+                pairHeardInput.focus();
+            });
+
+            addVocabButton.addEventListener('click', () => {
+                const word = vocabInput.value.trim();
+                if (!word) return;
+                if (!customVocab.some(w => w.toLowerCase() === word.toLowerCase())) {
+                    customVocab.push(word);
+                    saveCustomDicts();
+                    rebuildVocabInIndex();
+                }
+                vocabInput.value = '';
+                renderMyWordsLists();
+                vocabInput.focus();
+            });
+
+            // Enter-to-add convenience
+            pairReplaceInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addPairButton.click(); });
+            vocabInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addVocabButton.click(); });
+
+            myWordsClose.addEventListener('click', closeMyWords);
+            myWordsOverlay.addEventListener('click', (e) => {
+                if (e.target === myWordsOverlay) closeMyWords();
+            });
+
+            manageMyWordsButton.addEventListener('click', () => {
+                hidePopover();
+                openMyWords(null);
+            });
+
+            addToMyWordsButton.addEventListener('click', () => {
+                const heard = activeWordSpan ? activeWordSpan.textContent : '';
+                hidePopover();
+                openMyWords(heard);
+            });
+
+            // Reposition/dismiss popover on scroll & resize
+            transcriptContainer.addEventListener('scroll', hidePopover);
+            window.addEventListener('resize', hidePopover);
 
         }
     </script>
