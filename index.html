@@ -728,6 +728,7 @@
         .my-words-modal-body {
             padding: 16px 20px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .my-words-section + .my-words-section {
             margin-top: 24px;
@@ -757,6 +758,11 @@
             border-radius: 8px;
             background: var(--bg-primary);
             color: var(--text-primary);
+            /* iOS standalone PWA: inputs in a fixed overlay otherwise won't focus/show keyboard */
+            -webkit-user-select: text;
+            user-select: text;
+            touch-action: manipulation;
+            cursor: text;
         }
         .my-words-arrow {
             color: var(--text-secondary);
