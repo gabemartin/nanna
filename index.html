@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <title>Nanna - Speech to Text</title>
 
     <!-- Primary Meta Tags -->
@@ -79,6 +79,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        /* iOS 18 standalone-PWA keyboard mitigation: keep native touch/selection
+           behavior on anything editable so the soft keyboard can appear. */
+        input, textarea, [contenteditable="true"] {
+            touch-action: auto;
+            -webkit-user-select: text;
+            user-select: text;
         }
 
         body {
@@ -758,10 +766,7 @@
             border-radius: 8px;
             background: var(--bg-primary);
             color: var(--text-primary);
-            /* iOS standalone PWA: inputs in a fixed overlay otherwise won't focus/show keyboard */
-            -webkit-user-select: text;
-            user-select: text;
-            touch-action: manipulation;
+            touch-action: auto;
             cursor: text;
         }
         .my-words-arrow {
