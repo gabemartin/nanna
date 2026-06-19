@@ -53,7 +53,7 @@ The app can be installed as a standalone web app on iOS/Android:
 
 ### Tap to Correct
 Speech-to-text mistakes are usually *similar-sounding* words rather than typos, so a phonetic engine (not a spell-checker) drives suggestions:
-- The header **✦ correct** toggle enters correction mode; words become tappable and a popover lists ranked replacements.
+- The floating **✦ correct** toggle (next to the **?**, shown only when a transcript exists) enters correction mode; words become tappable and a popover lists ranked replacements.
 - Engine lives in `lib/double-metaphone.js` (vendored MIT, words/double-metaphone) + `lib/wordlist.js` (common-English candidate pool). Loaded via plain `<script src>`, exposing `doubleMetaphone` and `NANNA_WORDLIST` globals — still no build step or CDN.
 - Custom terms (`nannaCustomCorrections`, `nannaCustomVocab` in localStorage) layer on top via the "My words" manager: replacement pairs always win; vocabulary is surfaced for similar-sounding words.
 
