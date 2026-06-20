@@ -89,6 +89,14 @@
             user-select: text;
         }
 
+        /* The viewport now allows zoom (required so the iOS keyboard appears),
+           which re-enables double-tap-zoom and makes iOS eat single taps on small
+           targets. Mark interactive elements as manipulation so taps fire instantly
+           — this is what keeps word-correction taps and buttons responsive. */
+        button, .word {
+            touch-action: manipulation;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             background: var(--bg-primary);
